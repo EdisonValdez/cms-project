@@ -12,8 +12,29 @@ from django.conf.urls.i18n import i18n_patterns
 from rest_framework.authtoken.views import obtain_auth_token
 from .api import api_router
 from .authentication import CustomAuthToken
+from django.http import HttpResponse
+from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.cache import never_cache
+from django.conf import settings
 
-urlpatterns = [
+@csrf_exempt
+@never_cache
+def health_check(request):
+    """
+    Health check endpoint exempt from middleware interference.
+    """
+    # Basic service check
+    return HttpResponse(
+        content="OK",
+        status=200,
+        content_type="text/plain"
+    )
+
+urlpatterns = [ 
+    path('health', health_check, name='health_check_no_slash'),
+    path('health/', health_check, name='health_check'),
+ 
     # Django Admin
     path('django-admin/', admin.site.urls),
 

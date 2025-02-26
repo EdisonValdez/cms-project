@@ -20,7 +20,7 @@ SECRET_KEY = 'NZX650912mnhtS'
 INSTALLED_APPS = [
     "home",
     "search",
-    "lscms.apps.LscmsConfig",
+    "lscms",
     'rest_framework',
     'rest_framework.authtoken',
  
