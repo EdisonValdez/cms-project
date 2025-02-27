@@ -3,6 +3,10 @@
 from .base import *
 import os
 import dj_database_url
+from pathlib import Path
+
+
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 # Production settings
 DEBUG = False
@@ -25,8 +29,8 @@ MIDDLEWARE = ['whitenoise.middleware.WhiteNoiseMiddleware'] + MIDDLEWARE
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Static files configuration
-STATIC_ROOT = os.path.join(BASE_DIR.parent, 'staticfiles')
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Configure AWS S3 for media files
 if 'AWS_STORAGE_BUCKET_NAME' in os.environ:
