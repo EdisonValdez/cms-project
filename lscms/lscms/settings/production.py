@@ -57,6 +57,7 @@ STORAGES = {
         "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
     },
 }
+WHITENOISE_ROOT = os.path.join(BASE_DIR, 'static')
 
 # Configure AWS S3 for media files
 if 'AWS_STORAGE_BUCKET_NAME' in os.environ:
