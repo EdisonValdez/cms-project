@@ -60,6 +60,7 @@ MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.middleware.locale.LocaleMiddleware",
     "wagtail.contrib.redirects.middleware.RedirectMiddleware",
+    'lscms.middleware.HealthCheckMiddleware',
 ]
 
 ROOT_URLCONF = "lscms.urls"

@@ -1,10 +1,23 @@
 # lscms/lscms/views.py
 
+from django.http import HttpResponse
 from rest_framework import viewsets
 from .models import HeaderBlock, FooterBlock, AdBlock, SEOSettings, MenuItem, MarketingCampaign, NotificationMessage, LayoutSettings, AnalyticsSettings
 from .serializers import HeaderBlockSerializer, FooterBlockSerializer, AdBlockSerializer, SEOSettingsSerializer, MenuItemSerializer, MarketingCampaignSerializer, NotificationMessageSerializer, LayoutSettingsSerializer, AnalyticsSettingsSerializer
 from rest_framework.permissions import IsAuthenticated  # Modify with other permission class
 from .permissions import IsAdminOrReadOnly
+
+import logging
+logger = logging.getLogger(__name__)
+
+def health_check(request): 
+    """
+    Debug health check.
+    """
+    logger.info(f"Health check called with path: {request.path}, full_path: {request.get_full_path()}")
+    logger.info(f"Request META: {request.META}")
+    
+    return HttpResponse("OK", status=200)
 
 # HeaderBlock ViewSet
 class HeaderBlockViewSet(viewsets.ModelViewSet):
