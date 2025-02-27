@@ -7,7 +7,10 @@ from pathlib import Path
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
- 
+
+# Production settings
+DEBUG = False
+
 # Get the domain from environment variables
 import socket
 from ipaddress import IPv4Network
@@ -18,14 +21,13 @@ ALLOWED_HOSTS = [
     '.ondigitalocean.app',
     'localsecrets.travel',
 ]
-DEBUG = os.environ.get('DEBUG', 'FALSE').upper() == 'TRUE'
 
 # Add all possible Kubernetes pod IPs
 # This covers the 10.244.0.0/16 subnet commonly used by Kubernetes
 for subnet in ['10.244.0.0/16']:
     network = IPv4Network(subnet)
     ALLOWED_HOSTS.extend([str(ip) for ip in network.hosts()])
-
+    
 
 # Database settings
 if 'DATABASE_URL' in os.environ:
@@ -35,15 +37,11 @@ if 'DATABASE_URL' in os.environ:
 
 # Add WhiteNoise middleware for static files
 MIDDLEWARE = ['whitenoise.middleware.WhiteNoiseMiddleware'] + MIDDLEWARE
-#STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-#STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
-# Static files
-STATIC_ROOT = '/workspace/static'  # Match env variable
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 # Static files configuration
 STATIC_URL = '/static/'
-
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Configure AWS S3 for media files
 if 'AWS_STORAGE_BUCKET_NAME' in os.environ:
