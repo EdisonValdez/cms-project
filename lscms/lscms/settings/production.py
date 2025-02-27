@@ -116,3 +116,9 @@ try:
     from .local import *
 except ImportError:
     pass
+# Add this at the end of your production.py file
+try:
+    from .fixes import *
+except ImportError:
+    pass
+
