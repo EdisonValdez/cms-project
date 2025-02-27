@@ -12,11 +12,22 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 DEBUG = False
 
 # Get the domain from environment variables
+import socket
+from ipaddress import IPv4Network
+
+# Basic allowed hosts
 ALLOWED_HOSTS = [
-    os.environ.get('DJANGO_ALLOWED_HOST', '*'),
+    '*',  # Allow all hosts temporarily
     '.ondigitalocean.app',
     'localsecrets.travel',
 ]
+
+# Add all possible Kubernetes pod IPs
+# This covers the 10.244.0.0/16 subnet commonly used by Kubernetes
+for subnet in ['10.244.0.0/16']:
+    network = IPv4Network(subnet)
+    ALLOWED_HOSTS.extend([str(ip) for ip in network.hosts()])
+    
 
 # Database settings
 if 'DATABASE_URL' in os.environ:
