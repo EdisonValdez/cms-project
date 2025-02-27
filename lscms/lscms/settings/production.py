@@ -57,12 +57,15 @@ else:
     MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
     MEDIA_URL = '/media/'
 
-# Security settings - TEMPORARILY DISABLED FOR TESTING
-CSRF_COOKIE_SECURE = False  # Change to True when using HTTPS
-SESSION_COOKIE_SECURE = False  # Change to True when using HTTPS
-SECURE_SSL_REDIRECT = False  # Change to True when using HTTPS
+# Security settings - temporarily disabled for testing
+CSRF_COOKIE_SECURE = False
+SESSION_COOKIE_SECURE = False
+SECURE_SSL_REDIRECT = False
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
+
+# Wagtail specific settings
+WAGTAILADMIN_STATIC_FILE_VERSION_STRINGS = True
 
 # Uncomment these when you're ready for production-grade security
 # SECURE_HSTS_SECONDS = 31536000  # 1 year
@@ -79,9 +82,16 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', SECRET_KEY)
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+    },
     'handlers': {
         'console': {
             'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
         },
     },
     'root': {
@@ -92,6 +102,11 @@ LOGGING = {
         'django': {
             'handlers': ['console'],
             'level': os.environ.get('DJANGO_LOG_LEVEL', 'INFO'),
+            'propagate': False,
+        },
+        'wagtail': {
+            'handlers': ['console'],
+            'level': os.environ.get('WAGTAIL_LOG_LEVEL', 'INFO'),
             'propagate': False,
         },
     },
