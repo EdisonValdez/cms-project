@@ -34,7 +34,7 @@ def health_check(request):
 urlpatterns = [ 
     path('health', health_check, name='health_check_no_slash'),
     path('health/', health_check, name='health_check'),
- 
+    path('health/', include('health.urls')),
     # Django Admin
     path('django-admin/', admin.site.urls),
 
