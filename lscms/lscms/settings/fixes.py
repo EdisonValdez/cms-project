@@ -3,6 +3,8 @@ Emergency fixes for deployment issues
 """
 import os
 
+from lscms.lscms.settings.base import INSTALLED_APPS, MIDDLEWARE
+
 # Force different URLs for static and media
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
