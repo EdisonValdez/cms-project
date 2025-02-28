@@ -42,7 +42,9 @@ INSTALLED_APPS = [
     
     "modelcluster",
     "taggit",
-    
+    'compressor',
+    'theme_selector',
+
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -61,7 +63,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     'whitenoise.middleware.WhiteNoiseMiddleware',
-    'lscms.middleware.WagtailAdminStaticFilesMiddleware',
+    
     "django.middleware.locale.LocaleMiddleware",
     "wagtail.contrib.redirects.middleware.RedirectMiddleware",
 ]
@@ -160,7 +162,12 @@ CACHES = {
 STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
+    'compressor.finders.CompressorFinder',
 ]
+
+COMPRESS_PRECOMPILERS = (
+    ('text/x-scss', 'django_libsass.SassCompiler'),
+)
 
 STATICFILES_DIRS = [
     os.path.join(PROJECT_DIR, "static"),

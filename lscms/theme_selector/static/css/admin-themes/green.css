@@ -1,0 +1,33 @@
+/* theme_settings/static/css/admin-themes/green.css */
+:root {
+    --w-color-primary: #2ecc71;           /* Green */
+    --w-color-primary-200: #7ee2a8;       /* Light green */
+    --w-color-primary-400: #2ecc71;       /* Main green */
+    --w-color-primary-600: #27ae60;       /* Dark green */
+    --w-color-primary-800: #1e8449;       /* Very dark green */
+    
+    /* Secondary accent color */
+    --w-color-secondary: #e67e22;         /* Orange */
+    --w-color-secondary-100: #f0b27a;     /* Light orange */
+    --w-color-secondary-400: #e67e22;     /* Main orange */
+    --w-color-secondary-600: #d35400;     /* Dark orange */
+  }
+  
+  .sidebar {
+    background-color: #1e8449;
+  }
+  
+  .sidebar__inner .nav-main a:hover,
+  .sidebar__inner .nav-main a.sidebar-menu-item--active {
+    background-color: #27ae60;
+  }
+  
+  .button-primary {
+    background-color: var(--w-color-primary);
+    border-color: var(--w-color-primary-600);
+  }
+  
+  .button-primary:hover {
+    background-color: var(--w-color-primary-600);
+  }
+  

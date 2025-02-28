@@ -1,0 +1,52 @@
+// lscms/static/scss/wagtail_admin.scss
+
+// Import Wagtail's SCSS if needed
+// @import 'wagtailadmin/scss/core';
+
+// Define your variables
+$color-primary: #3498db;
+$color-secondary: #e74c3c;
+$text-color: #333333;
+$background-color: #ffffff;
+$sidebar-color: #2c3e50;
+$sidebar-text: #ecf0f1;
+
+// Custom styling
+:root {
+  --w-color-primary: #{$color-primary};
+  --w-color-primary-200: lighten($color-primary, 10%);
+  --w-color-primary-400: $color-primary;
+  --w-color-primary-600: darken($color-primary, 10%);
+  --w-color-primary-800: darken($color-primary, 20%);
+  
+  --w-color-secondary: #{$color-secondary};
+  --w-color-secondary-100: lighten($color-secondary, 15%);
+  --w-color-secondary-400: $color-secondary;
+  --w-color-secondary-600: darken($color-secondary, 10%);
+}
+
+// Styling for specific components
+.sidebar {
+  background-color: $sidebar-color;
+  
+  .sidebar__inner .nav-main {
+    a {
+      color: $sidebar-text;
+      
+      &:hover {
+        background-color: lighten($sidebar-color, 10%);
+      }
+    }
+  }
+}
+
+// Button styling
+.button-primary {
+  background-color: var(--w-color-primary);
+  border-color: var(--w-color-primary-600);
+  
+  &:hover {
+    background-color: var(--w-color-primary-600);
+  }
+}
+ 

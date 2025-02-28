@@ -3,7 +3,17 @@ from wagtail import hooks
 from wagtail.admin.rich_text.editors.draftail import features as draftail_features
 from draftjs_exporter.dom import DOM
 from draftjs_exporter.html import HTML
-
+from django.templatetags.static import static
+from django.utils.html import format_html
+ 
+@hooks.register('insert_global_admin_css')
+def global_admin_css():
+    """Add custom CSS to the Wagtail admin."""
+    return format_html(
+        '<link rel="stylesheet" href="{}">\n',
+        static('CACHE/css/wagtail_admin.css')
+    )
+ 
 # First, make sure DOM is properly initialized
 html_exporter = HTML()
 

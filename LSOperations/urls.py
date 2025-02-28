@@ -1,3 +1,4 @@
+# LSOperations/urls.py
 from django.views.generic.base import RedirectView
 
 from django.contrib import admin

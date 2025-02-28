@@ -2,7 +2,7 @@
 from django.db import models
 from wagtail.models import Page
 from wagtail.fields import StreamField
-from wagtail.admin.panels import FieldPanel
+from wagtail.admin.panels import FieldPanel, TabbedInterface, ObjectList
 from wagtail import blocks
 from wagtail.images.blocks import ImageChooserBlock
 from wagtail.embeds.blocks import EmbedBlock
@@ -39,7 +39,7 @@ class StandardPage(Page):
         FieldPanel('intro'),
         FieldPanel('body'),
     ]
-
+ 
 class HomePage(Page):
     """
     Home page model with a flexible content area.
@@ -64,8 +64,15 @@ class HomePage(Page):
         # Add APIContentBlock if needed later
     ], use_json_field=True, blank=True)
     
-    content_panels = Page.content_panels + [
-        FieldPanel('banner_title'),
-        FieldPanel('banner_subtitle'),
-        FieldPanel('content'),
-    ]
+    edit_handler = TabbedInterface([
+        ObjectList([
+            FieldPanel('banner_title'),
+            FieldPanel('banner_subtitle'),
+        ], heading='Banner'),
+        ObjectList([
+            FieldPanel('content'),
+        ], heading='Content'),
+        ObjectList(Page.promote_panels, heading='Promote'),
+        ObjectList(Page.settings_panels, heading='Settings'),
+    ])
+    
