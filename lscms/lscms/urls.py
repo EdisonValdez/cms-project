@@ -1,7 +1,6 @@
 # LSOperations/lscms/lscms/urls.py
 
 from django.conf import settings
-from django.urls import include, path
 from django.contrib import admin
 from wagtail.admin import urls as wagtailadmin_urls
 from wagtail import urls as wagtail_urls
@@ -13,10 +12,13 @@ from rest_framework.authtoken.views import obtain_auth_token
 from .api import api_router
 from .authentication import CustomAuthToken
 from django.http import HttpResponse
-from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.cache import never_cache
-from django.conf import settings
+from django.urls import path, include, re_path
+from django.contrib import admin
+from django.views.static import serve
+import os
+import site
 
 @csrf_exempt
 @never_cache
@@ -56,6 +58,21 @@ urlpatterns = [
     # For anything not caught by the above, fall back to the Wagtail page serving mechanism
     path("", include(wagtail_urls)),
 ]
+
+if not settings.DEBUG:
+    site_packages = site.getsitepackages()[0]
+    wagtail_admin_static = os.path.join(site_packages, 'wagtail', 'admin', 'static', 'wagtailadmin')
+    drf_static_dir = os.path.join(site_packages, 'rest_framework', 'static', 'rest_framework')
+    
+    urlpatterns += [
+        re_path(r'^static/wagtailadmin/(?P<path>.*)$', serve, {
+            'document_root': wagtail_admin_static
+        }),
+        re_path(r'^static/rest_framework/(?P<path>.*)$', serve, {
+            'document_root': drf_static_dir
+        }),
+    ]
+    
 if settings.DEBUG:
     from django.contrib.staticfiles.urls import staticfiles_urlpatterns
     urlpatterns += staticfiles_urlpatterns()

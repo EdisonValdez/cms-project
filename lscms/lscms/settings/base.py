@@ -23,7 +23,7 @@ INSTALLED_APPS = [
     "lscms",
     'rest_framework',
     'rest_framework.authtoken',
- 
+    'drf_yasg',
     
     "wagtail.contrib.forms",
     "wagtail_modeladmin",  # Changed from wagtail.contrib.modeladmin
@@ -63,7 +63,9 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     'whitenoise.middleware.WhiteNoiseMiddleware',
-    
+    #'lscms.middleware.WagtailAdminStaticFilesMiddleware',   
+    #'lscms.middleware.DRFStaticFilesMiddleware', 
+    'lscms.middleware.CombinedStaticFilesMiddleware',
     "django.middleware.locale.LocaleMiddleware",
     "wagtail.contrib.redirects.middleware.RedirectMiddleware",
 ]
@@ -225,3 +227,14 @@ WAGTAILADMIN_BASE_URL = "https://cms-ls-yerpb.ondigitalocean.app"
 # see https://docs.wagtail.org/en/stable/advanced_topics/deploying.html#user-uploaded-files
 WAGTAILDOCS_EXTENSIONS = ['csv', 'docx', 'key', 'odt', 'pdf', 'pptx', 'rtf', 'txt', 'xlsx', 'zip']
 
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+    ],
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10,
+}

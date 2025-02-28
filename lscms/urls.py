@@ -6,7 +6,9 @@ from django.contrib import admin
 from wagtail.admin import urls as wagtailadmin_urls
 from wagtail import urls as wagtail_urls
 from wagtail.documents import urls as wagtaildocs_urls
-
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+from rest_framework import permissions
 from search import views as search_views
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.views.static import serve
@@ -28,6 +30,21 @@ def health_check(request):
         content_type="text/plain"
     )
 
+
+
+schema_view = get_schema_view(
+   openapi.Info(
+      title="LocalSecrets CMS API",
+      default_version='v1',
+      description="API for LocalSecrets CMS",
+      terms_of_service="https://www.yourwebsite.com/terms/",
+      contact=openapi.Contact(email="contact@yourwebsite.com"),
+      license=openapi.License(name="BSD License"),
+   ),
+   public=True,
+   permission_classes=(permissions.AllowAny,),
+)
+
 urlpatterns = [
     # Health check endpoints
     path('health', health_check, name='health_check_no_slash'),
@@ -41,6 +58,10 @@ urlpatterns = [
     # Document and search URLs
     path('documents/', include(wagtaildocs_urls)),
     path('search/', search_views.search, name='search'),
+
+    path('api/docs/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    path('api/redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+
 ]
 
 # Serve static Wagtail admin files in all environments
