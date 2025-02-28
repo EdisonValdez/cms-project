@@ -29,16 +29,14 @@ def health_check(request):
         status=200,
         content_type="text/plain"
     )
-
-
-
+ 
 schema_view = get_schema_view(
    openapi.Info(
       title="LocalSecrets CMS API",
       default_version='v1',
       description="API for LocalSecrets CMS",
-      terms_of_service="https://www.yourwebsite.com/terms/",
-      contact=openapi.Contact(email="contact@yourwebsite.com"),
+      terms_of_service="https://www.localsecrets.travel/terms/",
+      contact=openapi.Contact(email="contact@localsecrets.travel"),
       license=openapi.License(name="BSD License"),
    ),
    public=True,

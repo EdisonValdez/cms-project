@@ -1,6 +1,7 @@
 # LSOperations/lscms/lscms/settings/base.py
- 
+
 import os
+import mimetypes
 from django.utils.translation import gettext_lazy as _
 
 # At the top of the file with other default settings
@@ -24,7 +25,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'drf_yasg',
-    
+   
     "wagtail.contrib.forms",
     "wagtail_modeladmin",  # Changed from wagtail.contrib.modeladmin
     "wagtail.contrib.redirects",
@@ -39,7 +40,7 @@ INSTALLED_APPS = [
     "wagtail.admin",
     "wagtail",
     'wagtail.locales',
-    
+   
     "modelcluster",
     "taggit",
     'compressor',
@@ -53,22 +54,27 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
 ]
 
+# Properly order middleware for optimal functioning
+# Security middleware should be first, then WhiteNoise, then our static middleware
 MIDDLEWARE = [
-    'lscms.middleware.HealthCheckMiddleware', 
+    "django.middleware.security.SecurityMiddleware",  # Security first
+    'whitenoise.middleware.WhiteNoiseMiddleware',     # WhiteNoise next for static files
+    'lscms.middleware.StaticFilesMIMEMiddleware',     # Our MIME type middleware
+    'lscms.middleware.HealthCheckMiddleware',         # Health check can come after static files
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "django.middleware.security.SecurityMiddleware",
-    'whitenoise.middleware.WhiteNoiseMiddleware',
-    #'lscms.middleware.WagtailAdminStaticFilesMiddleware',   
-    #'lscms.middleware.DRFStaticFilesMiddleware', 
-    'lscms.middleware.CombinedStaticFilesMiddleware',
     "django.middleware.locale.LocaleMiddleware",
     "wagtail.contrib.redirects.middleware.RedirectMiddleware",
 ]
+
+# Removed redundant static middleware:
+# - ComprehensiveStaticFilesMiddleware
+# - CombinedStaticFilesMiddleware
+# These were causing conflicts and only one static middleware should be used
 
 ROOT_URLCONF = "lscms.urls"
 
@@ -98,16 +104,15 @@ WSGI_APPLICATION = "lscms.wsgi.application"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
-        'default': {
-
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.getenv('DB_NAME', 'lsoperations'),
-            'USER': os.getenv('DB_USER', 'postgres'),
-            'PASSWORD': os.getenv('DB_PASSWORD', 'Thesecret1'),
-            'HOST': os.getenv('DB_HOST', 'localhost'),
-            'PORT': os.getenv('DB_PORT', '5432'),
-        }
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('DB_NAME', 'lsoperations'),
+        'USER': os.getenv('DB_USER', 'postgres'),
+        'PASSWORD': os.getenv('DB_PASSWORD', 'Thesecret1'),
+        'HOST': os.getenv('DB_HOST', 'localhost'),
+        'PORT': os.getenv('DB_PORT', '5432'),
     }
+}
 
 
 # Password validation
@@ -171,6 +176,15 @@ COMPRESS_PRECOMPILERS = (
     ('text/x-scss', 'django_libsass.SassCompiler'),
 )
 
+# Define MIME types for proper handling of static files
+mimetypes.add_type("text/css", ".css", True)
+mimetypes.add_type("application/javascript", ".js", True)
+mimetypes.add_type("image/svg+xml", ".svg", True)
+mimetypes.add_type("font/woff", ".woff", True)
+mimetypes.add_type("font/woff2", ".woff2", True)
+mimetypes.add_type("font/ttf", ".ttf", True)
+
+# Only define STATICFILES_DIRS once (it was defined twice)
 STATICFILES_DIRS = [
     os.path.join(PROJECT_DIR, "static"),
 ]
@@ -181,15 +195,24 @@ STATIC_URL = "/static/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MEDIA_URL = "/media/"
 
-# Default storage settings, with the staticfiles storage updated.
-# See https://docs.djangoproject.com/en/5.1/ref/settings/#std-setting-STORAGES
+# Improve static file storage to use ManifestStaticFilesStorage for better caching
 STORAGES = {
     "default": {
         "BACKEND": "django.core.files.storage.FileSystemStorage",
     },
     "staticfiles": {
-        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+        "BACKEND": "django.contrib.staticfiles.storage.ManifestStaticFilesStorage",
     },
+}
+
+# Configure WhiteNoise for better static file handling in production
+WHITENOISE_MIMETYPES = {
+    '.css': 'text/css',
+    '.js': 'application/javascript',
+    '.svg': 'image/svg+xml',
+    '.woff': 'font/woff',
+    '.woff2': 'font/woff2',
+    '.ttf': 'font/ttf',
 }
 
 # Django sets a maximum of 1000 fields per form by default, but particularly complex page models
@@ -203,11 +226,6 @@ WAGTAIL_SITE_NAME = "Local Secrets CMS"
 
 # Custom settings
 WAGTAIL_FRONTEND_LOGIN_URL = '/login/'
-
-STATICFILES_DIRS = [
-    os.path.join(PROJECT_DIR, "static"),
-]
-
 
 # Search
 # https://docs.wagtail.org/en/stable/topics/search/backends.html
@@ -227,6 +245,7 @@ WAGTAILADMIN_BASE_URL = "https://cms-ls-yerpb.ondigitalocean.app"
 # see https://docs.wagtail.org/en/stable/advanced_topics/deploying.html#user-uploaded-files
 WAGTAILDOCS_EXTENSIONS = ['csv', 'docx', 'key', 'odt', 'pdf', 'pptx', 'rtf', 'txt', 'xlsx', 'zip']
 
+# REST Framework settings with proper format handling
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticatedOrReadOnly',
@@ -235,6 +254,37 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.JSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer',
     ],
+    'DEFAULT_PARSER_CLASSES': [
+        'rest_framework.parsers.JSONParser',
+        'rest_framework.parsers.FormParser',
+        'rest_framework.parsers.MultiPartParser',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle'
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '100/day',
+        'user': '1000/day'
+    },
+    'DEFAULT_CONTENT_NEGOTIATION_CLASS': 'rest_framework.negotiation.DefaultContentNegotiation',
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
+    'DATETIME_FORMAT': '%Y-%m-%dT%H:%M:%S%z',
+}
+
+# Swagger/OpenAPI documentation settings
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
+        'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header'
+        }
+    }
 }
