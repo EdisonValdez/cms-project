@@ -1,0 +1,78 @@
+/* Custom branding colors */
+:root {
+    --w-color-primary: #212D94;  /* Main brand color */
+    --w-color-primary-200: #3a47aa;  /* Lighter shade */
+    --w-color-secondary: #F4C031;  /* Secondary color */
+    --w-color-secondary-100: #F1948A;  /* Lighter secondary */
+    
+    /* Sidebar */
+    --w-color-sidebar-bg: #212D94;  /* Sidebar background */
+    --w-color-primary-200: #3a47aa;  /* Lighter shade */
+    --w-color-sidebar-selected-bg: #212D84;  /* Selected item background */
+    
+    /* Header */
+    --w-color-header-bg: #212D94;  /* Header background */
+    
+    /* Text colors */
+    --w-color-text-primary: #212D94;  /* Primary text */
+    --w-color-text-secondary: #7F8C8D;  /* Secondary text */
+    
+    /* Button colors */
+    --w-color-button-primary: #F4C031;  /* Primary button */
+    --w-color-button-primary-hover: #d3ab3c;  /* Primary button hover */
+    --w-color-button-secondary: #95A5A6;  /* Secondary button */
+    --w-color-button-secondary-hover: #7F8C8D;  /* Secondary button hover */
+}
+/* Logo styling */
+.wagtail-logo {
+    max-height: 80px;
+    width: auto;
+    object-fit: contain;
+}
+
+/* Login page logo */
+.login .wagtail-logo {
+    max-height: 60px;
+    margin-bottom: 2em;
+}
+ 
+.footer__container {
+    background: #83770d;
+    border-radius: .1875rem .1875rem 0 0;
+    color: var(--w-color-text-button);
+    padding: .55rem;
+    transition: transform 1s;
+}
+
+/* Custom sidebar styling */
+.sidebar {
+    background-color: var(--w-color-sidebar-bg);
+}
+
+/* Custom header styling */
+.nav-wrapper {
+    background-color: var(--w-color-header-bg);
+}
+
+/* Custom button styling */
+.button {
+    border-radius: 4px;
+}
+
+/* Custom form styling */
+.field label {
+    color: var(--w-color-text-primary);
+    font-weight: 600;
+}
+
+/* Custom table styling */
+.listing {
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Custom card styling */
+.panel {
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
