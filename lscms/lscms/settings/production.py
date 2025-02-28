@@ -1,7 +1,11 @@
 # LSOperations/lscms/lscms/settings/production.py
 
+from django.conf import settings
 from .base import *
 import os
+import sys
+from pathlib import Path
+import site
 import dj_database_url
 from pathlib import Path
 
@@ -143,6 +147,37 @@ LOGGING = {
         },
     },
 }
+
+# Get the site-packages directory where wagtail is installed
+site_packages = site.getsitepackages()[0]
+wagtail_admin_static = Path(site_packages) / "wagtail" / "admin" / "static" / "wagtailadmin"
+
+# Create the static directory if it doesn't exist
+static_dir = Path(settings.STATIC_ROOT) / "wagtailadmin"
+if not static_dir.exists():
+    os.makedirs(static_dir, exist_ok=True)
+
+# Loop through all files in wagtail admin static and create symlinks
+for root, dirs, files in os.walk(wagtail_admin_static):
+    for file in files:
+        src = Path(root) / file
+        rel_path = src.relative_to(wagtail_admin_static)
+        dst = static_dir / rel_path
+        
+        # Create parent directories if needed
+        os.makedirs(dst.parent, exist_ok=True)
+        
+        # Create symlink or copy file
+        try:
+            if not dst.exists():
+                if hasattr(os, 'symlink'):
+                    os.symlink(src, dst)
+                else:
+                    # On Windows or systems without symlink support
+                    import shutil
+                    shutil.copy2(src, dst)
+        except Exception as e:
+            print(f"Error creating symlink/copy: {e}", file=sys.stderr)
 
 # Load local settings if they exist
 try:
