@@ -1,0 +1,45 @@
+<!-- home/templates/blocks/api_content.html -->
+{% load wagtailcore_tags %}
+
+<div class="api-content" data-url="{{ value.api_url }}">
+    <div class="api-content-loading">Loading content...</div>
+    <div class="api-content-loaded" style="display: none;"></div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const contentBlock = document.querySelector('[data-url="{{ value.api_url }}"]');
+    const loadingElement = contentBlock.querySelector('.api-content-loading');
+    const contentElement = contentBlock.querySelector('.api-content-loaded');
+    
+    fetch('{{ value.api_url }}')
+        .then(response => response.json())
+        .then(data => {
+            // Example: Format and display the data
+            let html = '<div class="api-data">';
+            if (Array.isArray(data)) {
+                data.forEach(item => {
+                    html += `<div class="api-item">
+                        <h3>${item.title || ''}</h3>
+                        <p>${item.description || ''}</p>
+                    </div>`;
+                });
+            } else {
+                html += `<div class="api-item">
+                    <h3>${data.title || ''}</h3>
+                    <p>${data.description || ''}</p>
+                </div>`;
+            }
+            html += '</div>';
+            
+            contentElement.innerHTML = html;
+            loadingElement.style.display = 'none';
+            contentElement.style.display = 'block';
+        })
+        .catch(error => {
+            contentElement.innerHTML = `<div class="error">Error loading content: ${error.message}</div>`;
+            loadingElement.style.display = 'none';
+            contentElement.style.display = 'block';
+        });
+});
+</script>
